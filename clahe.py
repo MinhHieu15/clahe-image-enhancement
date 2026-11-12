@@ -1,19 +1,10 @@
-"""
-CLAHE (Contrast Limited Adaptive Histogram Equalization) viết từ đầu bằng NumPy.
-
-Các bước:
-1. Chia ảnh thành lưới tile (vd 8x8).
-2. Tính histogram mỗi tile, cắt (clip) các bin vượt ngưỡng clip_limit
-   và phân phối lại phần dư đều cho mọi bin -> hạn chế khuếch đại nhiễu.
-3. Tính hàm ánh xạ (CDF) cho từng tile.
-4. Nội suy song tuyến tính giữa 4 tile lân cận để tránh hiệu ứng "ô vuông".
-"""
+"""CLAHE (Contrast Limited Adaptive Histogram Equalization) in NumPy."""
 import numpy as np
 
 
 def _tile_mapping(tile, clip_limit, n_bins=256):
     hist = np.bincount(tile.ravel(), minlength=n_bins).astype(np.float64)
-    # clip_limit tính theo bội số của giá trị trung bình mỗi bin (giống OpenCV)
+    # clip_limit is a multiple of the mean bin height, as in OpenCV
     limit = max(clip_limit * tile.size / n_bins, 1.0)
     excess = np.sum(np.maximum(hist - limit, 0))
     hist = np.minimum(hist, limit) + excess / n_bins
@@ -22,14 +13,13 @@ def _tile_mapping(tile, clip_limit, n_bins=256):
 
 
 def clahe(img, clip_limit=2.0, grid=(8, 8)):
-    """Áp dụng CLAHE cho ảnh xám uint8."""
+    """Apply CLAHE to a uint8 grayscale image."""
     if img.ndim != 2 or img.dtype != np.uint8:
-        raise ValueError("Cần ảnh xám kiểu uint8")
+        raise ValueError(f"expected a 2-D uint8 image, got shape {img.shape} and dtype {img.dtype}")
     h, w = img.shape
     gy, gx = grid
     th, tw = int(np.ceil(h / gy)), int(np.ceil(w / gx))
 
-    # Đệm ảnh (phản chiếu) để chia hết cho kích thước tile
     padded = np.pad(img, ((0, th * gy - h), (0, tw * gx - w)), mode="reflect")
 
     maps = np.empty((gy, gx, 256))
@@ -37,7 +27,7 @@ def clahe(img, clip_limit=2.0, grid=(8, 8)):
         for j in range(gx):
             maps[i, j] = _tile_mapping(padded[i * th:(i + 1) * th, j * tw:(j + 1) * tw], clip_limit)
 
-    # Toạ độ của mỗi pixel so với tâm các tile
+    # Bilinear interpolation between the four nearest tile centres removes block edges
     yc = (np.arange(h) + 0.5) / th - 0.5
     xc = (np.arange(w) + 0.5) / tw - 0.5
     y0 = np.clip(np.floor(yc).astype(int), 0, gy - 1)
