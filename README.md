@@ -7,7 +7,7 @@ Pipeline: CLAHE (written from scratch in NumPy) → Gaussian blur → Otsu thres
 ![Coin counting](results/coins_detection.png)
 
 ## Results on real photos
-Both images come from scikit-image's sample data.
+Image sources are listed [at the end](#image-sources).
 
 | Image | Method | Detected | True |
 |---|---|---|---|
@@ -56,3 +56,12 @@ python detect.py photo.jpg --min-area 200
 python detect.py photo.jpg --dark --no-split
 python demo_clahe.py
 ```
+
+## Image sources
+All input images are loaded through `skimage.data` ([scikit-image](https://scikit-image.org/docs/stable/api/skimage.data.html)).
+
+| Image | Function | Source | License |
+|---|---|---|---|
+| Greek coins from Pompeii | `data.coins()` | [Brooklyn Museum Collection](https://www.brooklynmuseum.org/opencollection/archives/image/51611) | No known copyright restrictions |
+| Human cells undergoing mitosis | `data.human_mitosis()` | David Root, from the data behind Moffat J. et al. (2006), "A lentiviral RNAi library for human and mouse genes applied to an arrayed viral high-content screen", *Cell* 124(6):1283–98, [doi:10.1016/j.cell.2006.01.040](https://doi.org/10.1016/j.cell.2006.01.040) | CC0 ([discussion](https://github.com/CellProfiler/examples/issues/41)) |
+| Surface of the moon | `data.moon()` | scikit-image sample data; the library gives no further source | — |

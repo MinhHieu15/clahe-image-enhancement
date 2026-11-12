@@ -1,8 +1,13 @@
 """
-Two applications of the ROI pipeline on real photographs (scikit-image sample data):
+Two applications of the ROI pipeline on real photographs loaded through skimage.data:
 
   coins   - count the 24 coins in a photo with uneven lighting, with and without CLAHE
   nuclei  - count cell nuclei in a fluorescence microscopy image and flag dividing (mitotic) cells
+
+Image sources:
+  coins          Brooklyn Museum Collection, no known copyright restrictions
+                 https://www.brooklynmuseum.org/opencollection/archives/image/51611
+  human_mitosis  David Root, CC0; data from Moffat et al., Cell 124(6):1283-98 (2006), doi:10.1016/j.cell.2006.01.040
 
 Everything is written to results/.
 """
