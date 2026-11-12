@@ -1,0 +1,5 @@
+image,method,detected,true_count
+coins,Otsu only,21,24
+coins,CLAHE + Otsu + watershed,24,24
+nuclei,CLAHE + Otsu + watershed,314,
+nuclei (mitotic),intensity > median + 3 MAD,13,

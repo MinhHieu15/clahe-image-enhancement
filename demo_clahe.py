@@ -2,8 +2,9 @@
 Compare the original image, global histogram equalization, this CLAHE and OpenCV's CLAHE,
 with histograms and the PSNR between the two CLAHE outputs.
 
-    python demo.py                   # synthetic low-contrast test image
-    python demo.py --image photo.jpg
+    python demo_clahe.py                    # scikit-image "moon" photo
+    python demo_clahe.py --synthetic        # synthetic low-contrast test image
+    python demo_clahe.py --image photo.jpg
 """
 import argparse
 import os
@@ -11,6 +12,7 @@ import os
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+from skimage import data
 
 from clahe import clahe
 
@@ -33,6 +35,7 @@ def psnr(a, b):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--image", help="input image path")
+    ap.add_argument("--synthetic", action="store_true", help="use a synthetic low-contrast image")
     ap.add_argument("--clip", type=float, default=2.0, help="clip limit")
     ap.add_argument("--grid", type=int, default=8, help="tiles per side")
     ap.add_argument("--out", default="results/comparison.png")
@@ -42,8 +45,10 @@ def main():
         img = cv2.imread(args.image, cv2.IMREAD_GRAYSCALE)
         if img is None:
             raise SystemExit(f"could not read image: {args.image}")
-    else:
+    elif args.synthetic:
         img = make_low_contrast_image()
+    else:
+        img = data.moon()
 
     he = cv2.equalizeHist(img)
     ours = clahe(img, args.clip, (args.grid, args.grid))
